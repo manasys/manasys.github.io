@@ -9,6 +9,10 @@
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  <script type = "text/javascript" src = "https://d3js.org/d3.v3.min.js" ></script>
+  <script type = "text/javascript" src = "https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js" ></script>
+
   <style>
   body {
     font: 400 15px Lato, sans-serif;
@@ -30,8 +34,8 @@
     margin-bottom: 30px;
   }  
   .jumbotron {
-    background-color: #f4511e;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000;
     padding: 100px 25px;
     font-family: Montserrat, sans-serif;
   }
@@ -119,7 +123,7 @@
   }
   .navbar {
     margin-bottom: 0;
-    background-color: #f4511e;
+    background-color: #cccccc;
     z-index: 9999;
     border: 0;
     font-size: 12px !important;
@@ -129,7 +133,7 @@
     font-family: Montserrat, sans-serif;
   }
   .navbar li a, .navbar .navbar-brand {
-    color: #fff !important;
+    color: #000 !important;
   }
   .navbar-nav li a:hover, .navbar-nav li.active a {
     color: #f4511e !important;
@@ -200,7 +204,10 @@
         <span class="icon-bar"></span>                        
       </button>
       <a class="navbar-brand" href="#myPage"><img src="images/logo_invisible_background.png" alt="ManaSys"/>
+<p>"Say it once"</p>
+</a>
     </div>
+<div></div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#about">ABOUT</a></li>
@@ -213,9 +220,13 @@
   </div>
 </nav>
 
+<!--
+-->
 <div class="jumbotron text-center">
+<!--
   <h1>ManaSys</h1> 
   <p>"Say it once!"</p> 
+-->
 <!--
   <form>
     <div class="input-group">
@@ -227,20 +238,26 @@
   </form>
 -->
 </div>
+<!--
+-->
 
 <!-- Container (About Section) -->
 <div id="about" class="container-fluid">
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-4">
       <h2>About ManaSys</h2><br>
       <h4>We are a fully buzzword compliant company. We are also ethical, use sustainable practices and create innovative and maintainable solutions.</h4><br>
 <!--
       <br><button class="btn btn-default btn-lg">Get in Touch</button>
 -->
     </div>
+<!--
     <div class="col-sm-4">
       <span class="glyphicon glyphicon-signal logo"></span>
     </div>
+-->
+     <div id="wordcloud" class="col-sm-4">
+     </div>
   </div>
 </div>
 
@@ -545,4 +562,66 @@ $(document).ready(function(){
 </script>
 
 </body>
+
+<script>
+var fill = d3.scale.category20();
+var words = [{"text": "Java", "size": 100, "url":"#portfolio"},
+             {"text": "Scala", "size": 80, "url":"#portfolio"},
+             {"text": "Spring","size": 80,  "url":"#portfolio"},
+             {"text": "Atlassian", "size": 80, "url":"#portfolio"},
+             {"text": "Architecture", "size": 80, "url":"#portfolio"},
+             {"text": "Agile", "size": 80, "url":"#portfolio"},
+             {"text": "Reactive", "size": 80, "url":"#portfolio"},
+             {"text": "Functional", "size": 80, "url":"#portfolio"},
+             {"text": "Integration", "size": 80, "url":"#portfolio"},
+             {"text": "MuleSoft", "size": 80, "url":"#portfolio"},
+             {"text": "Apache Kafka", "size": 80, "url":"#portfolio"},
+             {"text": "Apache Spark", "size": 80, "url":"#portfolio"},
+             {"text": "Artifical Intelligence", "size": 80, "url":"#portfolio"},
+             {"text": "Machine Learning", "size": 80, "url":"#portfolio"},
+             {"text": "Data Science", "size": 80, "url":"#portfolio"},
+             {"text": "Semantic Web", "size": 80, "url":"#portfolio"},
+             {"text": "Big Data", "size": 80, "url":"#portfolio"}]
+var width = 800;
+var height = 300;
+for (var i = 0; i < words.length; i++) {
+ words[i].size = 10 + Math.random() * 90;
+}
+
+d3.layout.cloud()
+  .size([width, height])
+  .words(words)
+  .padding(5)
+  .rotate(function() { return ~~ (Math.random() * 2) * 90; })
+  .font("Impact")
+  .fontSize(function(d) { return d.size;})
+  .on("end", draw)
+  .start();
+
+function draw(words) {
+    d3.select("#wordcloud")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", "translate("+ width/2 +","+ height/2 +")")
+      .selectAll("text")
+      .data(words)
+      .enter()
+      .append("text")
+      .style("font-size", function(d) { return d.size + "px"; })
+      .style("font-family", "Impact")
+      .style("fill", function(d, i) { return fill(i); })
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .text(function(d) { return d.text; })
+      .on("click", function (d, i){
+          // window.open(d.url, "_blank");
+          window.open(d.url, "_self");
+      });
+}
+</script>
+
 </html>
